@@ -1,0 +1,25 @@
+.task-list {
+    max-width: 400px;
+    margin: 2rem auto;
+    font-family: sans-serif;
+  
+    h2 {
+      margin-bottom: 1rem;
+    }
+  
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+  
+    li {
+      margin-bottom: 0.5rem;
+    }
+  
+    .completed {
+      text-decoration: line-through;
+      color: gray;
+    }
+  }
+  
+  
