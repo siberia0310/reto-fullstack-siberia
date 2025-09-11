@@ -1,0 +1,21 @@
+<div class="login-container">
+    <h2>Iniciar Sesión</h2>
+  
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <label for="email">Correo electrónico</label>
+      <input id="email" type="email" formControlName="email" />
+  
+      <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+           class="error">
+        <small *ngIf="loginForm.get('email')?.errors?.['required']">
+          El correo es obligatorio
+        </small>
+        <small *ngIf="loginForm.get('email')?.errors?.['email']">
+          El formato del correo no es válido
+        </small>
+      </div>
+  
+      <button type="submit" [disabled]="loginForm.invalid">Ingresar</button>
+    </form>
+  </div>
+  
