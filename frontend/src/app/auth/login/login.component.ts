@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
 @Component({
   selector: 'app-login',
   standalone: false,
@@ -10,7 +11,11 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   loginForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private authService: AuthService
+  ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
     });
@@ -19,11 +24,24 @@ export class LoginComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       const email = this.loginForm.value.email;
-      console.log('Login con:', email);
 
-      this.router.navigate(['/tasks']);
-    } else {
-      console.log('Formulario inválido');
+      this.authService.checkUser(email).subscribe({
+        next: (user) => {
+          if (user) {
+            localStorage.setItem('user', JSON.stringify(user));
+            this.router.navigate(['/tasks']);
+          } else {
+            this.authService.createUser(email).subscribe({
+              next: (newUser) => {
+                localStorage.setItem('user', JSON.stringify(newUser));
+                this.router.navigate(['/tasks']);
+              },
+              error: (err) => console.error('Error creando usuario:', err)
+            });
+          }
+        },
+        error: (err) => console.error('Error verificando usuario:', err)
+      });
     }
   }
 }
