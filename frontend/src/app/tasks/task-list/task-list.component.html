@@ -10,6 +10,6 @@
       />
       <span [class.completed]="task.completed">{{ task.title }}</span>
     </label>
-    <button (click)="deleteTask(task)">Eliminar</button>
+    <button (click)="deleteTask(task.id)">Eliminar</button>
   </li>
 </ul>
