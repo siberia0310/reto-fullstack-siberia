@@ -1,23 +1,60 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Task, TaskService } from '../task.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-task-list',
   standalone: false,
   templateUrl: './task-list.component.html',
-  styleUrl: './task-list.component.scss'
+  styleUrls: ['./task-list.component.scss'] 
 })
-export class TaskListComponent {
-  tasks = [
-    { id: 1, title: 'Primera tarea', completed: false },
-    { id: 2, title: 'Segunda tarea', completed: true },
-    { id: 3, title: 'Tercera tarea', completed: false }
-  ];
+export class TaskListComponent implements OnInit {
+  tasks: Task[] = [];
+  taskForm: FormGroup;
 
-  toggleTask(task: any) {
-    task.completed = !task.completed;
+  constructor(
+    private taskService: TaskService,
+    private fb: FormBuilder
+  ) {
+    this.taskForm = this.fb.group({
+      title: ['', Validators.required]
+    });
   }
 
-  deleteTask(task: any) {
-    this.tasks = this.tasks.filter(t => t.id !== task.id);
+  ngOnInit(): void {
+    this.loadTasks();
+  }
+
+  loadTasks(): void {
+    this.taskService.getTasks().subscribe((data) => {
+      this.tasks = data;
+    });
+  }
+
+  addTask(): void {
+    if (this.taskForm.valid) {
+      const newTask: Partial<Task> = {
+        title: this.taskForm.value.title,
+        completed: false
+      };
+
+      this.taskService.addTask(newTask).subscribe(() => {
+        this.taskForm.reset();
+        this.loadTasks(); 
+      });
+    }
+  }
+
+  toggleTask(task: Task): void {
+    const updatedTask: Partial<Task> = { ...task, completed: !task.completed };
+    this.taskService.updateTask(task.id, updatedTask).subscribe(() => {
+      this.loadTasks();
+    });
+  }
+
+  deleteTask(id: number): void { 
+    this.taskService.deleteTask(id).subscribe(() => {
+      this.loadTasks();
+    });
   }
 }
