@@ -3,6 +3,17 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
+# Angular
+frontend/node_modules
+frontend/dist
+
+# Backend
+backend/node_modules
+backend/dist
+
+# Firebase
+backend/serviceAccountKey.json
+
 # Builds
 dist/
 build/

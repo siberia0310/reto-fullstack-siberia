@@ -14,8 +14,10 @@ export class AuthService {
   checkUser(email: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/${email}`).pipe(
       catchError((error) => {
-        console.error('Error al verificar usuario:', error);
-        alert('No se pudo verificar el usuario');
+        if (error.status === 404) {
+          return new Observable((observer) => observer.next(null));
+        }
+        console.error('Error verificando usuario:', error);
         return throwError(() => error);
       })
     );
@@ -24,8 +26,7 @@ export class AuthService {
   createUser(email: string): Observable<any> {
     return this.http.post(this.apiUrl, { email }).pipe(
       catchError((error) => {
-        console.error('Error al crear usuario:', error);
-        alert('No se pudo crear el usuario');
+        console.error('Error creando usuario:', error);
         return throwError(() => error);
       })
     );
