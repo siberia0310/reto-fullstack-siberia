@@ -1,60 +1,81 @@
 import { Router } from 'express';
+import { db } from '../utils/firebase';
+import admin from 'firebase-admin';
 
 const router = Router();
+const tasksCollection = db.collection('tasks');
 
-// Mock de tareas en memoria
-let tasks: { id: number; title: string; completed: boolean }[] = [
-  { id: 1, title: 'Tarea demo', completed: false },
-  { id: 2, title: 'Preparar reto técnico', completed: true }
-];
-
-
-router.get('/', (req, res) => {
-  res.json(tasks);
+// Obtener todas las tareas
+router.get('/', async (req, res) => {
+  try {
+    const snapshot = await tasksCollection.get();
+    const tasks = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt ? data.createdAt.toDate() : null
+      };
+    });
+    res.json(tasks);
+  } catch (error) {
+    console.error('Error al obtener tareas:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 });
 
-router.post('/', (req, res) => {
-  const { title } = req.body;
 
-  if (!title) {
-    return res.status(400).json({ message: 'El título es requerido' });
+// Crear tarea
+router.post('/', async (req, res) => {
+  try {
+    const { title, description, completed } = req.body;
+
+    const newTask = {
+      title,
+      description,
+      completed: completed || false,
+      createdAt: admin.firestore.Timestamp.now() 
+    };
+
+    const docRef = await tasksCollection.add(newTask);
+    res.json({ id: docRef.id, ...newTask });
+  } catch (error) {
+    console.error('Error al crear tarea:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
-
-  const newTask = {
-    id: tasks.length + 1,
-    title,
-    completed: false
-  };
-
-  tasks.push(newTask);
-  res.status(201).json(newTask);
 });
 
-router.put('/:id', (req, res) => {
-  const { id } = req.params;
-  const { title, completed } = req.body;
+// Actualizar tarea
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, completed } = req.body;
 
-  const task = tasks.find(t => t.id === Number(id));
-  if (!task) {
-    return res.status(404).json({ message: 'Tarea no encontrada' });
+    const updates: any = {};
+    if (title !== undefined) updates.title = title;
+    if (description !== undefined) updates.description = description;
+    if (completed !== undefined) updates.completed = completed;
+
+    await tasksCollection.doc(id).update(updates);
+
+    res.json({ id, ...updates });
+  } catch (error) {
+    console.error('Error al actualizar tarea:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
-
-  if (title !== undefined) task.title = title;
-  if (completed !== undefined) task.completed = completed;
-
-  res.json(task);
 });
 
-router.delete('/:id', (req, res) => {
-  const { id } = req.params;
-  const index = tasks.findIndex(t => t.id === Number(id));
 
-  if (index === -1) {
-    return res.status(404).json({ message: 'Tarea no encontrada' });
+// Eliminar tarea
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await tasksCollection.doc(id).delete();
+    res.json({ message: 'Tarea eliminada correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar tarea:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
-
-  const deleted = tasks.splice(index, 1);
-  res.json({ message: 'Tarea eliminada', task: deleted[0] });
 });
 
 export default router;

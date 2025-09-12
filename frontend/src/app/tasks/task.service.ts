@@ -4,9 +4,11 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 export interface Task {
-  id: number;
+  id: string;
   title: string;
+  description?: string;   
   completed: boolean;
+  createdAt?: any;  
 }
 
 @Injectable({
@@ -37,7 +39,7 @@ export class TaskService {
     );
   }
 
-  updateTask(id: number, task: Partial<Task>): Observable<Task> {
+  updateTask(id: string, task: Partial<Task>): Observable<Task> {
     return this.http.put<Task>(`${this.apiUrl}/${id}`, task).pipe(
       catchError((error) => {
         console.error('Error al actualizar tarea:', error);
@@ -47,7 +49,7 @@ export class TaskService {
     );
   }
 
-  deleteTask(id: number): Observable<any> {
+  deleteTask(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`).pipe(
       catchError((error) => {
         console.error('Error al eliminar tarea:', error);

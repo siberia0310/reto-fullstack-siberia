@@ -1,15 +1,33 @@
 <h2>Lista de tareas</h2>
 
+<form [formGroup]="taskForm" (ngSubmit)="addTask()">
+  <input formControlName="title" placeholder="Título de la tarea" />
+  <input formControlName="description" placeholder="Descripción" />
+  <button type="submit">Agregar tarea</button>
+</form>
+
 <ul>
   <li *ngFor="let task of tasks">
-    <label>
-      <input
-        type="checkbox"
-        [checked]="task.completed"
-        (change)="toggleTask(task)"
-      />
-      <span [class.completed]="task.completed">{{ task.title }}</span>
-    </label>
-    <button (click)="deleteTask(task.id)">Eliminar</button>
+    <div *ngIf="editingTaskId === task.id; else viewMode">
+      <input [(ngModel)]="editTitle" placeholder="Editar título" />
+      <input [(ngModel)]="editDescription" placeholder="Editar descripción" />
+      <button (click)="saveEdit(task)">Guardar</button>
+      <button (click)="cancelEdit()">Cancelar</button>
+    </div>
+
+    <ng-template #viewMode>
+      <label>
+        <input
+          type="checkbox"
+          [checked]="task.completed"
+          (change)="toggleTask(task)"
+        />
+        <span [class.completed]="task.completed">{{ task.title }}</span>
+      </label>
+      <p>{{ task.description }}</p>
+      <small>Creada: {{ task.createdAt | date: 'short' }}</small>
+      <button (click)="startEdit(task)">Editar</button>
+      <button (click)="deleteTask(task.id)">Eliminar</button>
+    </ng-template>
   </li>
 </ul>
