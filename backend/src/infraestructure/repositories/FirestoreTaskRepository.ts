@@ -1,9 +1,9 @@
-import admin from "firebase-admin";
 import { Task } from "../../domain/entities/Task";
 import { TaskRepository } from "../../domain/interfaces/TaskRepository";
+import { db } from "../../utils/firebase";
 
 export class FirestoreTaskRepository implements TaskRepository {
-  private collectionRef = admin.firestore().collection("tasks");
+  private collectionRef = db.collection("tasks");
 
   async getAll(): Promise<Task[]> {
     const snapshot = await this.collectionRef.get();
@@ -76,7 +76,7 @@ export class FirestoreTaskRepository implements TaskRepository {
 
   private parseDate(dateInput: any): Date {
     if (!dateInput) return new Date();
-    if (dateInput.toDate) return dateInput.toDate();
+    if (typeof dateInput.toDate === "function") return dateInput.toDate();
     return new Date(dateInput);
   }
 }
