@@ -23,7 +23,11 @@ reto-fullstack-siberia/
 │── backend/       → API Node/Express
 │   ├── routes/    → Rutas de auth y tasks
 │   ├── src/       → Configuración de servidor
-│   └── serviceAccountKey.json (IGNORADO)
+│── firebase-data/ → Colecciones de ejemplo en JSON
+│   ├── users.json
+│   ├── tasks.json
+│── firestore.rules
+│── firestore.indexes.json
 ```
 
 ---
@@ -85,6 +89,98 @@ Por defecto corre en `http://localhost:4000`.
 - `POST /tasks` → Crear tarea
 - `PUT /tasks/:id` → Actualizar tarea
 - `DELETE /tasks/:id` → Eliminar tarea
+
+---
+
+## 🗄️ Datos de ejemplo (Firestore)
+
+El proyecto incluye la carpeta **`/firebase-data/`** con colecciones de ejemplo en formato JSON (`users.json`, `tasks.json`).  
+
+### 🔹 Contenido de `users.json`
+```json
+[
+  {
+    "email": "siberiagonzalez03@gmail.com",
+    "createdAt": "2025-09-11T17:43:41.000Z"
+  },
+  {
+    "email": "correo2@gmail.com",
+    "createdAt": "2025-09-13T17:31:10.636Z"
+  }
+]
+```
+
+### 🔹 Contenido de `tasks.json`
+```json
+[
+  {
+    "id": "3v3ydBiMjLbqmiBUq55g",
+    "title": "prueba fase 4",
+    "description": "fase 4.11",
+    "completed": false,
+    "createdAt": "2025-09-13T17:31:10.636Z",
+    "status": "pending"
+  },
+  {
+    "id": "8rH7AQZkokewbxTMCAG",
+    "title": "Segunda tarea",
+    "description": "Descripción de ejemplo",
+    "completed": true,
+    "createdAt": "2025-09-12T10:15:30.000Z",
+    "status": "done"
+  }
+]
+```
+
+### 🔹 Opción 1: Importar con Firefoo (recomendado)
+1. Instalar [Firefoo](https://firefoo.app).
+2. Conectarse a tu proyecto de Firebase.
+3. Clic derecho en Firestore → **Import Collections**.
+4. Seleccionar los archivos JSON de `/firebase-data/`.
+
+### 🔹 Opción 2: Crear manualmente en Firebase Console
+
+#### 1. Crear colección `users`
+- Ir a **Firestore Database → Iniciar colección**.
+- Nombre de colección: `users`.
+- Crear documento con ID automático.
+- Agregar los campos:
+  - `email` (string) → `"siberiagonzalez03@gmail.com"`
+  - `createdAt` (timestamp) → `2025-09-11T17:43:41.000Z`
+
+Ejemplo:
+```json
+{
+  "email": "siberiagonzalez03@gmail.com",
+  "createdAt": "2025-09-11T17:43:41.000Z"
+}
+```
+
+#### 2. Crear colección `tasks`
+- Ir a **Firestore Database → Iniciar colección**.
+- Nombre de colección: `tasks`.
+- Crear documento con ID automático.
+- Agregar los campos:
+  - `id` (string) → `"3v3ydBiMjLbqmiBUq55g"`
+  - `title` (string) → `"prueba fase 4"`
+  - `description` (string) → `"fase 4.11"`
+  - `completed` (boolean) → `false`
+  - `createdAt` (timestamp) → `2025-09-13T17:31:10.636Z`
+  - `status` (string) → `"pending"`
+
+Ejemplo:
+```json
+{
+  "id": "3v3ydBiMjLbqmiBUq55g",
+  "title": "prueba fase 4",
+  "description": "fase 4.11",
+  "completed": false,
+  "createdAt": "2025-09-13T17:31:10.636Z",
+  "status": "pending"
+}
+```
+
+Con estas dos colecciones ya tendrás un entorno de prueba listo para ejecutar el CRUD.
 
 ---
 
