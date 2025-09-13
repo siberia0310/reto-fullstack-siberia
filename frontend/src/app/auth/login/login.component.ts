@@ -2,12 +2,14 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmCreateUserDialog } from '../confirm-create-user/confirm-create-user.dialog';
 
 @Component({
   selector: 'app-login',
   standalone: false,
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
   loginForm: FormGroup;
@@ -15,10 +17,11 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private dialog: MatDialog
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email]],
     });
   }
 
@@ -32,18 +35,25 @@ export class LoginComponent {
             localStorage.setItem('user', JSON.stringify(user));
             this.router.navigate(['/tasks']);
           } else {
-            if (confirm('El usuario no existe. ¿Deseas crearlo?')) {
-              this.authService.createUser(email).subscribe({
-                next: (newUser) => {
-                  localStorage.setItem('user', JSON.stringify(newUser));
-                  this.router.navigate(['/tasks']);
-                },
-                error: (err) => console.error('Error creando usuario:', err)
+            this.dialog
+              .open(ConfirmCreateUserDialog, {
+                data: { email },
+              })
+              .afterClosed()
+              .subscribe((result) => {
+                if (result === true) {
+                  this.authService.createUser(email).subscribe({
+                    next: (newUser) => {
+                      localStorage.setItem('user', JSON.stringify(newUser));
+                      this.router.navigate(['/tasks']);
+                    },
+                    error: (err) => console.error('Error creando usuario:', err),
+                  });
+                }
               });
-            }
           }
         },
-        error: (err) => console.error('Error verificando usuario:', err)
+        error: (err) => console.error('Error verificando usuario:', err),
       });
     }
   }

@@ -6,7 +6,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   selector: 'app-task-list',
   standalone: false,
   templateUrl: './task-list.component.html',
-  styleUrls: ['./task-list.component.scss']
+  styleUrls: ['./task-list.component.scss'],
 })
 export class TaskListComponent implements OnInit {
   tasks: Task[] = [];
@@ -16,14 +16,19 @@ export class TaskListComponent implements OnInit {
   editingTaskId: string | null = null;
   editTitle: string = '';
   editDescription: string = '';
+  displayedColumns: string[] = [
+    'completed',
+    'title',
+    'description',
+    'createdAt',
+    'status',
+    'actions',
+  ];
 
-  constructor(
-    private taskService: TaskService,
-    private fb: FormBuilder
-  ) {
+  constructor(private taskService: TaskService, private fb: FormBuilder) {
     this.taskForm = this.fb.group({
       title: ['', Validators.required],
-      description: ['']
+      description: [''],
     });
   }
 
@@ -36,6 +41,13 @@ export class TaskListComponent implements OnInit {
       this.tasks = data;
     });
   }
+  onSubmit(): void {
+    if (this.editingTaskId) {
+      this.saveEdit();
+    } else {
+      this.addTask();
+    }
+  }
 
   addTask(): void {
     if (this.taskForm.valid) {
@@ -43,7 +55,7 @@ export class TaskListComponent implements OnInit {
         title: this.taskForm.value.title,
         description: this.taskForm.value.description,
         completed: false,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       this.taskService.addTask(newTask).subscribe(() => {
@@ -55,41 +67,43 @@ export class TaskListComponent implements OnInit {
 
   startEdit(task: Task): void {
     this.editingTaskId = task.id;
-    this.editTitle = task.title;
-    this.editDescription = task.description || '';
+
+    // llenamos el formulario con los valores actuales
+    this.taskForm.patchValue({
+      title: task.title,
+      description: task.description || '',
+    });
   }
 
-  saveEdit(task: Task): void {
-    const updatedTask: Task = {
-      ...task,
-      title: this.editTitle,
-      description: this.editDescription
-    };
-  
-    this.taskService.updateTask(task.id, updatedTask).subscribe({
-      next: () => {
+  saveEdit(): void {
+    if (this.taskForm.valid && this.editingTaskId) {
+      const updatedTask = {
+        ...this.tasks.find((t) => t.id === this.editingTaskId),
+        ...this.taskForm.value,
+      };
+
+      this.taskService.updateTask(this.editingTaskId, updatedTask).subscribe(() => {
         this.editingTaskId = null;
+        this.taskForm.reset();
         this.loadTasks();
-      },
-      error: (err) => alert('No se pudo actualizar la tarea: ' + err.message)
-    });
+      });
+    }
   }
 
   cancelEdit(): void {
     this.editingTaskId = null;
-    this.editTitle = '';
-    this.editDescription = '';
+    this.taskForm.reset();
   }
 
   toggleTask(task: Task): void {
     const updatedTask: Task = {
       ...task,
-      completed: !task.completed
+      completed: !task.completed,
     };
-  
+
     this.taskService.updateTask(task.id, updatedTask).subscribe({
       next: () => this.loadTasks(),
-      error: (err) => alert('No se pudo actualizar la tarea: ' + err.message)
+      error: (err) => alert('No se pudo actualizar la tarea: ' + err.message),
     });
   }
 

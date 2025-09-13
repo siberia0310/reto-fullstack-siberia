@@ -1,21 +1,23 @@
-<div class="login-container">
-    <h2>Iniciar Sesión</h2>
-  
+<mat-card>
+  <mat-card-title>Iniciar Sesión</mat-card-title>
+  <mat-card-content>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <label for="email">Correo electrónico</label>
-      <input id="email" type="email" formControlName="email" />
-  
-      <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-           class="error">
-        <small *ngIf="loginForm.get('email')?.errors?.['required']">
+      <mat-form-field>
+        <mat-label>Correo electrónico</mat-label>
+        <input matInput type="email" formControlName="email" />
+
+        <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
           El correo es obligatorio
-        </small>
-        <small *ngIf="loginForm.get('email')?.errors?.['email']">
+        </mat-error>
+        <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
           El formato del correo no es válido
-        </small>
+        </mat-error>
+      </mat-form-field>
+      <div class="button">
+        <button mat-raised-button type="submit" class="btn-primary" [disabled]="loginForm.invalid">
+          Ingresar
+        </button>
       </div>
-  
-      <button type="submit" [disabled]="loginForm.invalid">Ingresar</button>
     </form>
-  </div>
-  
+  </mat-card-content>
+</mat-card>

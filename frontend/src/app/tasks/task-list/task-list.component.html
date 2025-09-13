@@ -1,33 +1,71 @@
-<h2>Lista de tareas</h2>
+<nav class="custom-nav">
+  <button mat-stroked-button color="primary" class="login-button" [routerLink]="'/auth'">
+    <mat-icon>login</mat-icon>
+    <span>Login</span>
+  </button>
+</nav>
+<section>
+  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+    <div class="horizontal-stack">
+      <mat-form-field appearance="outline" class="form-element no-margin">
+        <mat-label>Titulo</mat-label>
+        <input matInput formControlName="title" />
+      </mat-form-field>
 
-<form [formGroup]="taskForm" (ngSubmit)="addTask()">
-  <input formControlName="title" placeholder="Título de la tarea" />
-  <input formControlName="description" placeholder="Descripción" />
-  <button type="submit">Agregar tarea</button>
-</form>
+      <mat-form-field appearance="outline" class="form-element no-margin">
+        <mat-label>Descripción</mat-label>
+        <input matInput formControlName="description" />
+      </mat-form-field>
 
-<ul>
-  <li *ngFor="let task of tasks">
-    <div *ngIf="editingTaskId === task.id; else viewMode">
-      <input [(ngModel)]="editTitle" placeholder="Editar título" />
-      <input [(ngModel)]="editDescription" placeholder="Editar descripción" />
-      <button (click)="saveEdit(task)">Guardar</button>
-      <button (click)="cancelEdit()">Cancelar</button>
+      <div class="form-element button-wrapper">
+        <button type="submit" mat-raised-button class="btn-primary w-full">
+          <mat-icon>{{ editingTaskId ? 'save' : 'add' }}</mat-icon>
+          {{ editingTaskId ? 'Guardar' : 'Agregar' }}
+        </button>
+      </div>
     </div>
+  </form>
+  <div class="table-wrapper">
+    <h2 class="table-title">📋 Lista de Tareas</h2>
 
-    <ng-template #viewMode>
-      <label>
-        <input
-          type="checkbox"
-          [checked]="task.completed"
-          (change)="toggleTask(task)"
-        />
-        <span [class.completed]="task.completed">{{ task.title }}</span>
-      </label>
-      <p>{{ task.description }}</p>
-      <small>Creada: {{ task.createdAt | date: 'short' }}</small>
-      <button (click)="startEdit(task)">Editar</button>
-      <button (click)="deleteTask(task.id)">Eliminar</button>
-    </ng-template>
-  </li>
-</ul>
+    <table class="mat-elevation-z2 custom-table">
+      <thead>
+        <tr>
+          <th>✔</th>
+          <th>Título</th>
+          <th>Descripción</th>
+          <th>Creado</th>
+          <th>Estado</th>
+          <th class="text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of tasks">
+          <td>
+            <mat-checkbox
+              [checked]="task.completed"
+              (change)="toggleTask(task)"
+              color="primary"
+            ></mat-checkbox>
+          </td>
+          <td>{{ task.title }}</td>
+          <td>{{ task.description }}</td>
+          <td>{{ task.createdAt | date : 'shortDate' }}</td>
+          <td>
+            <span class="badge" [ngClass]="task.completed ? 'done' : 'pending'">
+              {{ task.completed ? 'Completado' : 'Pendiente' }}
+            </span>
+          </td>
+          <td class="text-right">
+            <button mat-icon-button color="primary" (click)="startEdit(task)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteTask(task.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

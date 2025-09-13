@@ -1,0 +1,16 @@
+<mat-card>
+  <mat-card-title class="text-lg mb-4">¿Deseas crear este usuario?</mat-card-title>
+  <mat-card-content>
+    <p>
+      Se creará un usuario con el correo <strong>{{ data.email }}</strong
+      >.
+    </p>
+
+    <mat-dialog-actions class="dialog-actions">
+      <button mat-button class="btn-cancel" (click)="onCancel()">Cancelar</button>
+      <button mat-raised-button color="primary" class="btn-primary" (click)="onConfirm()">
+        Crear cuenta
+      </button>
+    </mat-dialog-actions>
+  </mat-card-content>
+</mat-card>

@@ -1,18 +1,58 @@
-/* You can add global styles to this file, and also import other style files */
-nav {
-    display: flex;
-    gap: 1rem;
-    background: #f5f5f5;
-    padding: 1rem;
-  }
-  
-  a {
-    text-decoration: none;
-    color: #333;
-  
-    &.active {
-      font-weight: bold;
-      color: #007bff;
-    }
-  }
-  
+@use '@angular/material' as mat;
+@use './styles/variables' as var;
+@use 'sass:color';
+html {
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+body {
+  // Default the application to a light color theme. This can be changed to
+  // `dark` to enable the dark color theme, or to `light dark` to defer to the
+  // user's system settings.
+  color-scheme: light;
+
+  // Set a default background, font and text colors for the application using
+  // Angular Material's system-level CSS variables. Learn more about these
+  // variables at https://material.angular.dev/guide/system-variables
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+
+  // Reset the user agent margin.
+  margin: 0;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+button[class^="btn-"] {
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-family: var.$font-family;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var.$primary-color;
+  color: white;
+}
+
+.btn-cancel {
+  background-color: var.$neutral-color;
+  color: #333;
+  border: 1px solid #ccc;
+  transition: background-color 0.2s ease;
+}
+
+
