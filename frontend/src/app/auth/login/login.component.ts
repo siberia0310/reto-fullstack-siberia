@@ -1,16 +1,38 @@
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+
 import { AuthService } from '../auth.service';
-import { MatDialog } from '@angular/material/dialog';
 import { ConfirmCreateUserDialog } from '../confirm-create-user/confirm-create-user.dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInAnonymously } from 'firebase/auth';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
-  standalone: false,
+  standalone: true, 
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    // Material
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSnackBarModule,
+    MatDialogModule
+  ]
 })
 export class LoginComponent implements AfterViewInit {
   loginForm: FormGroup;
@@ -28,10 +50,26 @@ export class LoginComponent implements AfterViewInit {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
     });
+
+    initializeApp(environment.firebaseConfig);
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => this.emailInput.nativeElement.focus(), 0);
+  }
+
+  async loginToFirebaseAndStoreToken(): Promise<void> {
+    const auth = getAuth();
+
+    try {
+      const userCredential = await signInAnonymously(auth);
+      const idToken = await userCredential.user.getIdToken();
+
+      localStorage.setItem('authToken', idToken);
+    } catch (error) {
+      console.error('Firebase auth error:', error);
+      this.snackBar.open('Error al autenticar con Firebase', 'Cerrar', { duration: 3000 });
+    }
   }
 
   onSubmit() {
@@ -42,33 +80,19 @@ export class LoginComponent implements AfterViewInit {
       this.authService.checkUser(email).subscribe({
         next: (user) => {
           if (user) {
-            localStorage.setItem('user', JSON.stringify(user));
-            this.snackBar.open('Inicio de sesión exitoso', 'Cerrar', { duration: 3000 });
-            this.router.navigate(['/tasks']);
-            this.isLoading = false;
+            this.finalizeLogin(user);
           } else {
-            this.dialog
-              .open(ConfirmCreateUserDialog, {
-                data: { email },
-              })
+            this.dialog.open(ConfirmCreateUserDialog, { data: { email } })
               .afterClosed()
               .subscribe((result) => {
                 if (result === true) {
                   this.authService.createUser(email).subscribe({
-                    next: (newUser) => {
-                      localStorage.setItem('user', JSON.stringify(newUser));
-                      this.snackBar.open('Usuario creado correctamente', 'Cerrar', {
-                        duration: 3000,
-                      });
-                      this.router.navigate(['/tasks']);
-                    },
+                    next: (newUser) => this.finalizeLogin(newUser),
                     error: (err) => {
                       console.error('Error creando usuario:', err);
                       this.snackBar.open('Error al crear usuario', 'Cerrar', { duration: 3000 });
-                    },
-                    complete: () => {
                       this.isLoading = false;
-                    },
+                    }
                   });
                 } else {
                   this.isLoading = false;
@@ -83,5 +107,13 @@ export class LoginComponent implements AfterViewInit {
         },
       });
     }
+  }
+
+  private async finalizeLogin(user: any) {
+    localStorage.setItem('user', JSON.stringify(user));
+    await this.loginToFirebaseAndStoreToken();
+    this.snackBar.open('Inicio de sesión exitoso', 'Cerrar', { duration: 3000 });
+    this.router.navigate(['/tasks']);
+    this.isLoading = false;
   }
 }

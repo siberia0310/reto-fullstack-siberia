@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-task-list',
-  standalone: false,
+  standalone: false, 
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.scss'],
 })
@@ -12,7 +12,6 @@ export class TaskListComponent implements OnInit {
   tasks: Task[] = [];
   taskForm: FormGroup;
 
-  // Variables de UI (estado temporal)
   editingTaskId: string | null = null;
   editTitle: string = '';
   editDescription: string = '';
@@ -41,6 +40,7 @@ export class TaskListComponent implements OnInit {
       this.tasks = data;
     });
   }
+
   onSubmit(): void {
     if (this.editingTaskId) {
       this.saveEdit();
@@ -67,8 +67,6 @@ export class TaskListComponent implements OnInit {
 
   startEdit(task: Task): void {
     this.editingTaskId = task.id;
-
-    // llenamos el formulario con los valores actuales
     this.taskForm.patchValue({
       title: task.title,
       description: task.description || '',
