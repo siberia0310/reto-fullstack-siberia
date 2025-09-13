@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ConfirmCreateUserDialog } from './confirm-create-user/confirm-create-user.dialog';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [LoginComponent, ConfirmCreateUserDialog, ConfirmCreateUserDialog],
@@ -23,6 +24,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatButtonModule,
     MatIconModule,
     MatDialogModule,
+    MatProgressSpinnerModule
   ],
 })
 export class AuthModule {}
