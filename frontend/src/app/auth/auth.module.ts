@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthRoutingModule } from './auth-routing-module';
 import { LoginComponent } from './login/login.component';
 import { MatCardModule } from '@angular/material/card';
@@ -11,20 +11,27 @@ import { MatIconModule } from '@angular/material/icon';
 import { ConfirmCreateUserDialog } from './confirm-create-user/confirm-create-user.dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
-  declarations: [LoginComponent, ConfirmCreateUserDialog, ConfirmCreateUserDialog],
+  declarations: [              
+    ConfirmCreateUserDialog
+  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    AuthRoutingModule,
-    MatCardModule,
+    FormsModule,
+    AuthRoutingModule,          
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatCheckboxModule,
+    MatCardModule,
     MatIconModule,
     MatDialogModule,
-    MatProgressSpinnerModule
-  ],
+    MatSnackBarModule,
+    MatProgressSpinnerModule 
+  ]
 })
 export class AuthModule {}
