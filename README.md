@@ -1,3 +1,4 @@
+
 # Reto Técnico – Fullstack Angular + Firebase
 
 Este proyecto implementa un **CRUD de tareas** con autenticación básica de usuario.  
@@ -36,7 +37,7 @@ reto-fullstack-siberia/
 
 ### 1. Clonar repositorio
 ```bash
-git clone https://github.com/tu-usuario/reto-fullstack-siberia.git
+git clone https://github.com/siberia0310/reto-fullstack-siberia
 cd reto-fullstack-siberia
 ```
 
@@ -52,7 +53,7 @@ npm install
 2. Crea un nuevo proyecto o usa el existente.
 3. Ve a **Configuración del proyecto → Cuentas de servicio**.
 4. Haz clic en **Generar nueva clave privada** → Esto descarga `serviceAccountKey.json`.
-5. Copia ese archivo en la carpeta `backend/`.
+5. Copia ese archivo en la carpeta `backend/functions`.
 
 ⚠️ **Importante**: El archivo `serviceAccountKey.json` está en `.gitignore`.  
 Nunca debe subirse a GitHub.
@@ -66,7 +67,7 @@ npm install
 ng serve
 ```
 
-El frontend se servirá en `http://localhost:4200`.
+El frontend se servirá en `http://localhost:4200` y https://retotecnicosiberia.web.app/auth.
 
 ---
 
@@ -77,7 +78,7 @@ cd backend
 npm run dev
 ```
 
-Por defecto corre en `http://localhost:4000`.
+Por defecto corre en `http://localhost:4000`, tambien en https://us-central1-retotecnicosiberia.cloudfunctions.net/api/.
 
 ---
 
@@ -131,56 +132,6 @@ El proyecto incluye la carpeta **`/firebase-data/`** con colecciones de ejemplo 
   }
 ]
 ```
-
-### 🔹 Opción 1: Importar con Firefoo (recomendado)
-1. Instalar [Firefoo](https://firefoo.app).
-2. Conectarse a tu proyecto de Firebase.
-3. Clic derecho en Firestore → **Import Collections**.
-4. Seleccionar los archivos JSON de `/firebase-data/`.
-
-### 🔹 Opción 2: Crear manualmente en Firebase Console
-
-#### 1. Crear colección `users`
-- Ir a **Firestore Database → Iniciar colección**.
-- Nombre de colección: `users`.
-- Crear documento con ID automático.
-- Agregar los campos:
-  - `email` (string) → `"siberiagonzalez03@gmail.com"`
-  - `createdAt` (timestamp) → `2025-09-11T17:43:41.000Z`
-
-Ejemplo:
-```json
-{
-  "email": "siberiagonzalez03@gmail.com",
-  "createdAt": "2025-09-11T17:43:41.000Z"
-}
-```
-
-#### 2. Crear colección `tasks`
-- Ir a **Firestore Database → Iniciar colección**.
-- Nombre de colección: `tasks`.
-- Crear documento con ID automático.
-- Agregar los campos:
-  - `id` (string) → `"3v3ydBiMjLbqmiBUq55g"`
-  - `title` (string) → `"prueba fase 4"`
-  - `description` (string) → `"fase 4.11"`
-  - `completed` (boolean) → `false`
-  - `createdAt` (timestamp) → `2025-09-13T17:31:10.636Z`
-  - `status` (string) → `"pending"`
-
-Ejemplo:
-```json
-{
-  "id": "3v3ydBiMjLbqmiBUq55g",
-  "title": "prueba fase 4",
-  "description": "fase 4.11",
-  "completed": false,
-  "createdAt": "2025-09-13T17:31:10.636Z",
-  "status": "pending"
-}
-```
-
-Con estas dos colecciones ya tendrás un entorno de prueba listo para ejecutar el CRUD.
 
 ---
 
