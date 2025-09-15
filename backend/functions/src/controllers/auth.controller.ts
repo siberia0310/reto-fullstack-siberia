@@ -12,20 +12,16 @@ export const verifyTokenController = async (req: Request, res: Response) => {
 };
 
 export const getUserByEmailController = async (req: Request, res: Response) => {
-  const { email } = req.params;
-
   try {
+    const { email } = req.params;
     const user = await authService.getUserByEmail(email);
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    res.json(user);
+    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+    return res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    return res.status(500).json({ message: 'Error del servidor' });
   }
 };
+
 
 export const createUserController = async (req: Request, res: Response) => {
   const { email } = req.body;

@@ -1,9 +1,6 @@
 import { Router } from "express";
-import {
-  verifyTokenController,
-  getUserByEmailController,
-  createUserController,
-} from "../controllers/auth.controller";
+import { verifyTokenController, getUserByEmailController, createUserController } from "../controllers/auth.controller";
+
 
 const router = Router();
 

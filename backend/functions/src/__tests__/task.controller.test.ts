@@ -1,6 +1,5 @@
 import request from 'supertest';
 import express from 'express';
-import bodyParser from 'body-parser';
 import taskRoutes from '../routes/task.routes';
 
 const app = express();

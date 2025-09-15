@@ -1,5 +1,5 @@
 import admin from 'firebase-admin';
-import serviceAccount from '../../serviceAccountKey.json'; 
+import serviceAccount from '../../serviceAccountKey.json';
 
 // Inicializar Firebase solo una vez
 if (!admin.apps.length) {
