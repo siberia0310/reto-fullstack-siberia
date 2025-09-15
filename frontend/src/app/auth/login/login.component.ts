@@ -15,10 +15,11 @@ import { ConfirmCreateUserDialog } from '../confirm-create-user/confirm-create-u
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously } from 'firebase/auth';
 import { environment } from '../../../environments/environment';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-login',
-  standalone: true, 
+  standalone: true,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   imports: [
@@ -31,8 +32,9 @@ import { environment } from '../../../environments/environment';
     MatInputModule,
     MatButtonModule,
     MatSnackBarModule,
-    MatDialogModule
-  ]
+    MatDialogModule,
+    MatProgressSpinnerModule,
+  ],
 })
 export class LoginComponent implements AfterViewInit {
   loginForm: FormGroup;
@@ -82,7 +84,8 @@ export class LoginComponent implements AfterViewInit {
           if (user) {
             this.finalizeLogin(user);
           } else {
-            this.dialog.open(ConfirmCreateUserDialog, { data: { email } })
+            this.dialog
+              .open(ConfirmCreateUserDialog, { data: { email } })
               .afterClosed()
               .subscribe((result) => {
                 if (result === true) {
@@ -92,7 +95,7 @@ export class LoginComponent implements AfterViewInit {
                       console.error('Error creando usuario:', err);
                       this.snackBar.open('Error al crear usuario', 'Cerrar', { duration: 3000 });
                       this.isLoading = false;
-                    }
+                    },
                   });
                 } else {
                   this.isLoading = false;
